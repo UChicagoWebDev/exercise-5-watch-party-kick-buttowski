@@ -20,22 +20,20 @@
   {% if room %}
   <div class="roomData">
     <div>Chatting in:</div>
+
     <h3 class="display">
       <span class="roomName">{{ room['name'] }}</span>
-      <!-- TODO: when clicked, 
-        - remove `hide` from the `edit` h3 below
-        - add `hide` to the parent h3 here -->
-      <a href="#"><span class="material-symbols-outlined">edit</span></a></h3>
+      <a href="#" onclick="toggleEditMode()">
+          <span class="material-symbols-outlined">edit</span>
+      </a>
     </h3>
     <h3 class="edit hide">
-      <input value="{{ room['name'] }}">
-      <!-- TODO: when clicked,
-        - POST to update the room name
-        - update `roomName` above with the new name
-        - remove `hide` from the `display` h3 above
-        - add `hide` to the parent h3 here -->
-      <a href="#"><span class="material-symbols-outlined">save</span></a></h3>
+      <input id="roomNameInput" value="{{ room['name'] }}">
+      <a href="#" onclick="saveRoomName({{ room['id'] }}, document.getElementById('roomNameInput').value)">
+          <span class="material-symbols-outlined">save</span>
+      </a>
     </h3>
+    
     <div class="invite">
       Invite users to this chat at:
       <a href="/rooms/{{ room['id'] }}" id="invite link">/rooms/{{ room['id'] }}</a>
@@ -49,37 +47,13 @@
   {% if room %}
   <div class="chat">
     <div class="comment_box">
-      <form>
-        <label for="comment">What do you have to say?</label>
-        <textarea name="comment"></textarea>
-        <button type="submit" value="Post">Post</button>
-      </form>
+      <form id="commentForm">
+        <label for="comment">What do you have to say?</label><br>
+        <textarea id="commentTextarea" name="comment"></textarea><br>
+        <button type="button" onclick="postMessage({{ room['id'] }}, document.getElementById('commentTextarea').value)">Post</button>
+    </form>
     </div>
     <div class="messages">
-      <message>
-        <author>Mr Chatterworth</author>
-        <content>Good evening! And how is everyone feeling?</content>
-      </message>
-      <message>
-        <author>big chats</author>
-        <content>gr8 lol</content>
-      </message>
-      <message>
-        <author>Mr Chatterworth</author>
-        <content>Splendid!</content>
-      </message>
-      <message>
-        <author>Chatty Cat</author>
-        <content>
-          Meow meow meow meow meow meow meow meow meow meow meow 
-          meow meow meow meow meow meow meow meow meow meow meow 
-          meow meow meow meow meow meow meow meow meow meow meow 
-        </content>
-      </message>
-      <message>
-        <author>Mr Chatterworth</author>
-        <content>Indeed, M. Cat. Indeed. 🧐</content>
-      </message>
     </div>
   </div>
   {% else %}
@@ -90,7 +64,7 @@
 </div>
 
 <script>
-startMessagePolling();
+startMessagePolling({{ room['id'] }});
 </script>
 
 </body>
