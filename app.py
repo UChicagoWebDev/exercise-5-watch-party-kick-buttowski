@@ -155,10 +155,12 @@ def login():
         password = request.form['password']
         u = query_db('select * from users where name = ? and password = ?', [name, password], one=True)
         if u['name'] == name:
-            resp = make_response(redirect("/"))
-            resp.set_cookie('user_id', u['name'])
-            resp.set_cookie('user_password', u['password'])
-            return render_with_error_handling('index.html', failed=False)  
+            name = u['name']
+            pwd = u['password']
+            resp = make_response('Cookie Set')
+            resp.set_cookie('user_id', name)
+            resp.set_cookie('user_password', pwd)
+            return redirect('/')
 
     return render_with_error_handling('login.html', failed=True)   
 
@@ -215,9 +217,10 @@ def update_password():
         )
         # resp = make_response(redirect('/'))
         # resp.set_cookie('user_password', request.headers['Password'])
-        resp = make_response(redirect('/profile'))
-        resp.set_cookie('user_password', request.headers['Password'])
-        return {}
+        password = request.headers['Password']
+        resp = make_response('Cookie set successfully!')
+        resp.set_cookie('user_password', password)
+        return resp
     return {'Status': 'Failed for Unknown Reasons'}, 403
 
 # POST to change the name of a room
